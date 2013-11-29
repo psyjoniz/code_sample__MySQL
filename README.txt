@@ -1,7 +1,6 @@
 Code Sample : MySQL
 
-This very basic PHP class for MySQL queries is meant to drop into just about
-any environment.
+A basic stand-alone PHP class for MySQL queries.
 
 Example of Use :
 
