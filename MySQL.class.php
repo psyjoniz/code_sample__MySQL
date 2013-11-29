@@ -1,6 +1,6 @@
 <?php
 
-//2013.11.11 - Jesse L Quattlebaum (psyjoniz@gmail.com)
+//2013.11.11 - Jesse L Quattlebaum (psyjoniz@gmail.com) (https://github.com/psyjoniz/code_sample__MySQL)
 //quickly thrown together mysql db handler class
 
 class MySQL {
