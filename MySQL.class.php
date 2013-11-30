@@ -1,7 +1,9 @@
 <?php
 
-//2013.11.11 - Jesse L Quattlebaum (psyjoniz@gmail.com) (https://github.com/psyjoniz/code_sample__MySQL)
-//quickly thrown together mysql db handler class
+/**
+ * 2013.11.11 - Jesse L Quattlebaum (psyjoniz@gmail.com) (https://github.com/psyjoniz/code_sample__MySQL)
+ * A small class for handling MySQL queries
+ */
 
 class MySQL {
 
