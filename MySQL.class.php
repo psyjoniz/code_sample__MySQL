@@ -49,11 +49,11 @@ class MySQL {
 		{
 			if(!$this->dbHand = mysqli_connect($this->sDBHost, $this->sDBUser, $this->sDBPass))
 			{
-				throw new Exception('ERROR:DB_CONNECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`" (mysqli_error() : ' . mysqli_error() . ')');
+				throw new Exception('ERROR:DB_CONNECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`" (mysqli_error() : ' . mysqli_error($this->dbHand) . ')');
 			}
 			if(!mysqli_select_db($this->dbHand, $this->sDBData))
 			{
-				throw new Exception('ERROR:DB_SELECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`" (mysqli_error() : ' . mysqli_error() . ')');
+				throw new Exception('ERROR:DB_SELECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`" (mysqli_error() : ' . mysqli_error($this->dbHand) . ')');
 			}
 		}
 		return $this->dbHand;
@@ -90,7 +90,7 @@ class MySQL {
 		$this->qResults = mysqli_query($this->dbHand, $sSQL);
 		if(false === $this->qResults)
 		{
-			throw new Exception('ERROR:DB_QUERY_FAILED:"' . mysqli_error() . '" -- SQL:"' . $sSQL . '"');
+			throw new Exception('ERROR:DB_QUERY_FAILED:"' . mysqli_error($this->dbHand) . '" -- SQL:"' . $sSQL . '"');
 		}
 		$this->iInsertId = @mysqli_insert_id();
 		if($bReturnResults) // only build and return results if we were looking for them
