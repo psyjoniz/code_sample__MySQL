@@ -20,9 +20,10 @@ class MySQL {
 	 * constructor with a-la-carte config
 	 *
 	 * @param array $aConfig allowing overide of hardcoded configuration parameters in an a-la-carte fasion for the following : sDBHost, sDBUser, sDBPass, sDBData and sSQL
+	 *
 	 * @return boolean|array
 	 */
-	function __construct($aConfig) {
+	function __construct($aConfig = null) {
 		if(isset($aConfig['sDBHost']))
 			$this->sDBHost = $aConfig['sDBHost'];
 		if(isset($aConfig['sDBUser']))
@@ -46,15 +47,13 @@ class MySQL {
 	{
 		if(!$this->dbHand)
 		{
-			if(!$this->dbHand = mysql_connect($this->sDBHost, $this->sDBUser, $this->sDBPass))
+			if(!$this->dbHand = mysqli_connect($this->sDBHost, $this->sDBUser, $this->sDBPass))
 			{
-				throw new Exception('ERROR:DB_CONNECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`"');
-				return false;
+				throw new Exception('ERROR:DB_CONNECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`" (mysqli_error() : ' . mysqli_error() . ')');
 			}
-			if(!mysql_select_db($this->sDBData, $this->dbHand))
+			if(!mysqli_select_db($this->dbHand, $this->sDBData))
 			{
-				throw new Exception('ERROR:DB_SELECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`"');
-				return false;
+				throw new Exception('ERROR:DB_SELECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`" (mysqli_error() : ' . mysqli_error() . ')');
 			}
 		}
 		return $this->dbHand;
@@ -64,10 +63,11 @@ class MySQL {
 	 * nothing fancy
 	 *
 	 * @param string $sInput text to be escaped
+	 *
 	 * @return string
 	 */
 	function escapeString($sInput) {
-		return mysql_real_escape_string($sInput, $this->dbHand);
+		return mysqli_real_escape_string($this->dbHand, $sInput);
 	}
 
 	/**
@@ -75,6 +75,7 @@ class MySQL {
 	 *
 	 * @param string $sSQL query statement to send to the database
 	 * @param boolean $bReturnResults switch to return or not return found results
+	 *
 	 * @return boolean|array
 	 */
 	function query($sSQL, $bReturnResults = true) // lightweight db handling -- great for gotta-have-it-now horrible for after it starts taking off and you gotta *cough* expand
@@ -85,35 +86,33 @@ class MySQL {
 		if(!$this->dbHand)
 		{
 			throw new Exception('ERROR:DB_CONNECTION_FAILED:"' . $this->sDBUser . '@`' . $this->sDBHost . '`.`' . $this->sDBData . '`"');
-			return false;
 		}
-		$this->qResults = mysql_query($sSQL, $this->dbHand);
+		$this->qResults = mysqli_query($this->dbHand, $sSQL);
 		if(false === $this->qResults)
 		{
-			throw new Exception('ERROR:DB_QUERY_FAILED:"' . mysql_error() . '" -- SQL:"' . $sSQL . '"');
-			return false;
+			throw new Exception('ERROR:DB_QUERY_FAILED:"' . mysqli_error() . '" -- SQL:"' . $sSQL . '"');
 		}
-		$this->iInsertId = @mysql_insert_id();
+		$this->iInsertId = @mysqli_insert_id();
 		if($bReturnResults) // only build and return results if we were looking for them
 		{
 			if($sSQLStart != 'insert' && $sSQLStart != 'update')
 			{
-				while($aResult = mysql_fetch_array($this->qResults, MYSQL_ASSOC))
+				while($aResult = mysqli_fetch_array($this->qResults, MYSQL_ASSOC))
 					$aResults[] = $aResult; // yes, always return a multi-dimensional array, even if its just one element -- this makes for post-processing ease
 				if(count($aResults) == 0)
 					throw new Exception('NOTICE:NO_RESULTS_FOUND');
 			}
-			//$this->iTotal = $this->getQueryTotal(); // somehow this broke flagging, NO idea how...  but flagging goes apeshit when this is enabled
-			return $aResults;
+			if(isset($aResults)) {
+				return $aResults;
+			}
 		}
-		else // if we got here, guesstimate we were successful
-			return true;
+		return true;
 	}
 
 	/**
 	 * get the most recent inserted records id
 	 *
-	 * @return interger
+	 * @return integer
 	 */
 	function getInsertId() {
 		return $this->iInsertId;
