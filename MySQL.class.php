@@ -80,7 +80,7 @@ class MySQL {
 	 */
 	function query($sSQL, $bReturnResults = true) // lightweight db handling -- great for gotta-have-it-now horrible for after it starts taking off and you gotta *cough* expand
 	{
-		$aSQLParts = split(' ', trim($sSQL));
+		$aSQLParts = explode(' ', trim($sSQL));
 		$sSQLStart = strtolower($aSQLParts[0]);
 		$this->connect();
 		if(!$this->dbHand)
