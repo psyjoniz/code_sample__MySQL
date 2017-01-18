@@ -92,7 +92,7 @@ class MySQL {
 		{
 			throw new Exception('ERROR:DB_QUERY_FAILED:"' . mysqli_error($this->dbHand) . '" -- SQL:"' . $sSQL . '"');
 		}
-		$this->iInsertId = @mysqli_insert_id();
+		$this->iInsertId = @mysqli_insert_id($this->dbHand);
 		if($bReturnResults) // only build and return results if we were looking for them
 		{
 			if($sSQLStart != 'insert' && $sSQLStart != 'update')
